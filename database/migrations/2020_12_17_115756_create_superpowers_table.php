@@ -18,7 +18,7 @@ class CreateSuperpowersTable extends Migration
             $table->string('name', 128);
             $table->timestamps();
         });
-        Schema::create('superpower_superhero', function (Blueprint $table) {
+        Schema::create('superhero_superpower', function (Blueprint $table) {
             $table->bigInteger('superhero_id')->unsigned();
             $table->bigInteger('superpower_id')->unsigned();
             $table->timestamps();

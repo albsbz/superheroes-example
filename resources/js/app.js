@@ -17,6 +17,8 @@ import UsersIndex from "./views/UsersIndex";
 import UsersEdit from "./views/UsersEdit";
 import NotFound from "./views/NotFound";
 import UsersCreate from "./views/UsersCreate";
+import SuperheroIndex from "./views/SuperheroIndex";
+import SuperheroEdit from "./views/SuperheroEdit";
 
 const router = new VueRouter({
     mode: "history",
@@ -24,37 +26,48 @@ const router = new VueRouter({
         {
             path: "/",
             name: "home",
-            component: Home,
+            component: Home
         },
         {
             path: "/hello",
             name: "hello",
-            component: Hello,
+            component: Hello
         },
         {
             path: "/users",
             name: "users.index",
-            component: UsersIndex,
+            component: UsersIndex
         },
         {
             path: "/users/:id/edit",
             name: "users.edit",
-            component: UsersEdit,
+            component: UsersEdit
         },
         {
             path: "/users/create",
             name: "users.create",
-            component: UsersCreate,
+            component: UsersCreate
+        },
+
+        {
+            path: "/superheroes",
+            name: "superhero.index",
+            component: SuperheroIndex
+        },
+        {
+            path: "/superhero/:id/edit",
+            name: "superhero.edit",
+            component: SuperheroEdit
         },
         { path: "/404", name: "404", component: NotFound },
-        { path: "*", redirect: "/404" },
-    ],
+        { path: "*", redirect: "/404" }
+    ]
 });
 
 const app = new Vue({
     el: "#app",
     components: { App },
-    router,
+    router
 });
 
 // window.Vue = require('vue');

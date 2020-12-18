@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UsersController;
+use App\Http\Controllers\Api\SuperheroesController;
 
 
 
@@ -31,3 +32,5 @@ Route::delete('/users/{user}', [UsersController::class, 'destroy']);
 Route::post('/users', [UsersController::class, 'store']);
 
 Route::get('/superheroes', [SuperheroesController::class, 'index']);
+Route::get('/superheroes/{id}', [SuperheroesController::class, 'show']);
+Route::put('/superheroes/{id}', [SuperheroesController::class, 'update']);

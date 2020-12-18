@@ -8,9 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Superhero extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'nickname',
+        'real_name',
+        'catch_phrase'
+    ];
     public function superpowers()
     {
-        return $this->belongsToMany(Superhero::class);
+        return $this->belongsToMany(Superpower::class);
     }
     public function images()
     {

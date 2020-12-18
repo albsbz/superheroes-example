@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\SuperheroSeeder;
+use Database\Seeders\SuperpowerSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,6 +17,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UsersTableSeeder::class,
+            SuperpowerSeeder::class,
+            SuperheroSeeder::class,
+
         ]);
     }
 }
