@@ -10,5 +10,14 @@ export default {
     },
     update(id, data) {
         return client.put(`superheroes/${id}`, data);
+    },
+    delete(id) {
+        return client.delete(`superheroes/${id}`);
+    },
+    create(data) {
+        return client.post("superheroes", data);
+    },
+    createData() {
+        return client.get(`superheroes/create-data`);
     }
 };

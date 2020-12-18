@@ -41,7 +41,19 @@ class SuperheroesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'nickname' => 'required',
+            'real_name' => 'required',
+            'catch_phrase' => 'required',
+            'images' => 'nullable',
+            'superpowers' => 'nullable',
+        ]);
+        $hero =  Superhero::create($data);
+
+        $hero->images()->attach($data['images']);
+        $hero->superpowers()->attach($data['superpowers']);
+
+        return response(201);
     }
 
     /**
@@ -83,24 +95,21 @@ class SuperheroesController extends Controller
             'nickname' => 'required',
             'real_name' => 'required',
             'catch_phrase' => 'required',
-            'images' => 'required',
-            'superpowers' => 'required',
+            'images' => 'nullable',
+            'superpowers' => 'nullable',
         ]);
 
         $hero = Superhero::find($id);
         $hero->update($data);
         $relatedImages = $hero->images();
         $relatedImages->detach();
-        $mappedImagesId = array_map(function ($i) {
-            return $i['id'];
-        }, $data['images']);
-        $relatedImages->attach($mappedImagesId);
+
+        $relatedImages->attach($data['images']);
 
         $relatedSuperpowers = $hero->superpowers();
         $relatedSuperpowers->detach();
-        // dd($data['superpowers']);
-
         $relatedSuperpowers->attach($data['superpowers']);
+
 
         return $this->show($id);
     }
@@ -113,6 +122,14 @@ class SuperheroesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Superhero::find($id)->delete();
+
+        return response(null, 204);
+    }
+    public function createData()
+    {
+        $allImages = ['allImages' => Image::all('id', 'url')];
+        $allSuperpowers = ['allSuperpowers' => Superpower::all('id', 'name')];
+        return json_encode(collect()->merge($allImages)->merge($allSuperpowers));
     }
 }

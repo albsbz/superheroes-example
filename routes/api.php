@@ -32,5 +32,8 @@ Route::delete('/users/{user}', [UsersController::class, 'destroy']);
 Route::post('/users', [UsersController::class, 'store']);
 
 Route::get('/superheroes', [SuperheroesController::class, 'index']);
+Route::get('/superheroes/create-data', [SuperheroesController::class, 'createData']);
 Route::get('/superheroes/{id}', [SuperheroesController::class, 'show']);
 Route::put('/superheroes/{id}', [SuperheroesController::class, 'update']);
+Route::delete('/superheroes/{id}', [SuperheroesController::class, 'destroy']);
+Route::post('/superheroes', [SuperheroesController::class, 'store']);

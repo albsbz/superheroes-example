@@ -1,13 +1,11 @@
 <template>
     <div>
-        <div v-if="message" class="alert">{{ message }}</div>
         <div v-if="errors">
             <div v-for="(error, k) in errors" :key="k" class="alert">
                 {{ error[0] }}
             </div>
         </div>
-        <div v-if="!loaded">Loading...</div>
-        <form @submit.prevent="onSubmit($event)" v-else>
+        <form @submit.prevent="onSubmit($event)">
             <div class="form-group">
                 <label for="nickname">Nickname</label>
                 <input id="nickname" v-model="superhero.nickname" />
@@ -53,10 +51,7 @@
             </select>
 
             <div class="form-group">
-                <button type="submit" :disabled="saving">Update</button>
-                <button :disabled="saving" @click.prevent="onDelete($event)">
-                    Delete
-                </button>
+                <button type="submit" :disabled="saving">Create</button>
             </div>
         </form>
     </div>
@@ -67,12 +62,9 @@ import requestSuperhero from "../assets/api/superhero.js";
 export default {
     data() {
         return {
-            message: null,
             errors: [],
-            loaded: false,
             saving: false,
             superhero: {
-                id: null,
                 nickname: "",
                 real_name: "",
                 catch_phrase: "",
@@ -96,13 +88,10 @@ export default {
                 images: this.checkedImages,
                 superpowers: this.selectedSuperpowers
             };
-            // console.log(updatedData);
             requestSuperhero
-                .update(this.superhero.id, updatedData)
+                .create(updatedData)
                 .then(response => {
-                    this.message = "Superhero updated";
-                    setTimeout(() => (this.message = null), 2000);
-                    this.superhero = response.data;
+                    this.$router.push({ name: "superhero.index" });
                 })
                 .catch(error => {
                     // console.log(error);
@@ -110,33 +99,21 @@ export default {
                     setTimeout(() => (this.errors = null), 2000);
                 })
                 .then(_ => (this.saving = false));
-        },
-        onDelete() {
-            this.saving = true;
-            requestSuperhero.delete(this.superhero.id).then(response => {
-                this.message = "Superhero deleted";
-                setTimeout(
-                    () => this.$router.push({ name: "superhero.index" }),
-                    2000
-                );
-            });
         }
     },
     created() {
         // @todo load user details
         requestSuperhero
-            .find(this.$route.params.id)
+            .createData()
             .then(response => {
                 this.loaded = true;
-                this.superhero = response.data;
-                response.data.images.map(image =>
-                    this.checkedImages.push(image.id)
-                );
-                response.data.superpowers.map(superpower =>
-                    this.selectedSuperpowers.push(superpower.id)
-                );
+                console.log({ ...response.data });
+                this.superhero = {
+                    ...this.superhero,
+                    ...{ ...response.data }
+                };
             })
-            .catch(err => {
+            .catch(error => {
                 this.$router.push({ name: "404" });
             });
     }

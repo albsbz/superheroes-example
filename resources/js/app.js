@@ -19,6 +19,7 @@ import NotFound from "./views/NotFound";
 import UsersCreate from "./views/UsersCreate";
 import SuperheroIndex from "./views/SuperheroIndex";
 import SuperheroEdit from "./views/SuperheroEdit";
+import SuperheroCreate from "./views/SuperheroCreate";
 
 const router = new VueRouter({
     mode: "history",
@@ -58,6 +59,11 @@ const router = new VueRouter({
             path: "/superhero/:id/edit",
             name: "superhero.edit",
             component: SuperheroEdit
+        },
+        {
+            path: "/superhero/create",
+            name: "superhero.create",
+            component: SuperheroCreate
         },
         { path: "/404", name: "404", component: NotFound },
         { path: "*", redirect: "/404" }
