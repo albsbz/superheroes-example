@@ -16,9 +16,16 @@ class CreateImagesTable extends Migration
         Schema::create('images', function (Blueprint $table) {
             $table->id();
             $table->string('url');
-            $table->bigInteger('superhero_id')->unsigned();
-            $table->foreign('superhero_id')->references('id')->on('superheroes');
+            // $table->bigInteger('superhero_id')->unsigned();
+            // $table->foreign('superhero_id')->references('id')->on('superheroes');
             $table->timestamps();
+        });
+        Schema::create('image_superhero', function (Blueprint $table) {
+            $table->bigInteger('image_id')->unsigned();
+            $table->bigInteger('superhero_id')->unsigned();
+            $table->timestamps();
+            $table->foreign('superhero_id')->references('id')->on('superheroes')->onDelete('cascade');
+            $table->foreign('image_id')->references('id')->on('images');
         });
     }
 
@@ -29,6 +36,8 @@ class CreateImagesTable extends Migration
      */
     public function down()
     {
+
+        Schema::dropIfExists('images_superheroes');
         Schema::dropIfExists('images');
     }
 }

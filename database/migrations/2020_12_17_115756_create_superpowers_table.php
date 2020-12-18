@@ -34,7 +34,7 @@ class CreateSuperpowersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('superpower_superhero');
+        Schema::dropIfExists('superhero_superpower');
         Schema::dropIfExists('superpowers');
     }
 }
