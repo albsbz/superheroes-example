@@ -19,6 +19,7 @@ class SuperheroResource extends JsonResource
             'id' => $this->id,
             'url' => $this->images->pluck('url'),
             'nickname' => $this->nickname,
+            'superpowers' => $this->superpowers
 
         ];
     }

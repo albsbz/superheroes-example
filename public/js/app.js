@@ -2340,7 +2340,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 // import axios from "axios";
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2393,27 +2392,41 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
-    _assets_api_superhero_js__WEBPACK_IMPORTED_MODULE_0__["default"].getData(to.query.page, function (err, data) {
+    _assets_api_superhero_js__WEBPACK_IMPORTED_MODULE_0__["default"].getData({
+      page: to.query.page
+    }, function (err, data) {
       next(function (vm) {
         return vm.setData(err, data);
       });
     });
   },
+  created: function created() {
+    var _this = this;
+
+    _assets_api_superhero_js__WEBPACK_IMPORTED_MODULE_0__["default"].createData().then(function (response) {
+      _this.allSuperpowers = response.data.allSuperpowers;
+    });
+  },
   // when route changes and this component is already rendered,
   // the logic will be slightly different.
   beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
-    var _this = this;
+    var _this2 = this;
 
     this.superheroes = this.links = this.meta = null;
-    _assets_api_superhero_js__WEBPACK_IMPORTED_MODULE_0__["default"].getData(to.query.page, function (err, data) {
-      _this.setData(err, data);
+    _assets_api_superhero_js__WEBPACK_IMPORTED_MODULE_0__["default"].getData({
+      page: to.query.page,
+      superpower: this.checkedSuperpowers
+    }, function (err, data) {
+      _this2.setData(err, data);
 
       next();
     });
   },
   methods: {
     goToPage: function goToPage(pageToGo) {
-      if (pageToGo === this.meta.current_page) {
+      var reload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      if (pageToGo === this.meta.current_page && !reload) {
         return;
       }
 
@@ -2446,9 +2459,27 @@ __webpack_require__.r(__webpack_exports__);
       if (err) {
         this.error = err.toString();
       } else {
+        // console.log(data);
         this.superheroes = data;
         this.links = links;
         this.meta = meta;
+      }
+    },
+    filterBySuperpower: function filterBySuperpower() {
+      var _this3 = this;
+
+      if (this.meta.current_page === 1) {
+        this.superheroes = this.links = this.meta = null;
+        _assets_api_superhero_js__WEBPACK_IMPORTED_MODULE_0__["default"].getData({
+          superpower: this.checkedSuperpowers
+        }, function (err, data) {
+          _this3.setData(err, data); // next();
+
+        });
+      } else {
+        setTimeout(function () {
+          return _this3.goToPage(1, true);
+        }, 2000);
       }
     }
   }
@@ -40033,6 +40064,65 @@ var render = function() {
         ])
       : _vm._e(),
     _vm._v(" "),
+    _c(
+      "form",
+      {
+        staticClass: "wrapper",
+        on: {
+          change: function($event) {
+            return _vm.filterBySuperpower($event)
+          }
+        }
+      },
+      _vm._l(_vm.allSuperpowers, function(superpower) {
+        return _c("div", { key: superpower.id }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.checkedSuperpowers,
+                expression: "checkedSuperpowers"
+              }
+            ],
+            attrs: { type: "checkbox", id: superpower.id },
+            domProps: {
+              value: superpower.id,
+              checked: Array.isArray(_vm.checkedSuperpowers)
+                ? _vm._i(_vm.checkedSuperpowers, superpower.id) > -1
+                : _vm.checkedSuperpowers
+            },
+            on: {
+              change: function($event) {
+                var $$a = _vm.checkedSuperpowers,
+                  $$el = $event.target,
+                  $$c = $$el.checked ? true : false
+                if (Array.isArray($$a)) {
+                  var $$v = superpower.id,
+                    $$i = _vm._i($$a, $$v)
+                  if ($$el.checked) {
+                    $$i < 0 && (_vm.checkedSuperpowers = $$a.concat([$$v]))
+                  } else {
+                    $$i > -1 &&
+                      (_vm.checkedSuperpowers = $$a
+                        .slice(0, $$i)
+                        .concat($$a.slice($$i + 1)))
+                  }
+                } else {
+                  _vm.checkedSuperpowers = $$c
+                }
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "superpower.id" } }, [
+            _vm._v(_vm._s(superpower.name))
+          ])
+        ])
+      }),
+      0
+    ),
+    _vm._v(" "),
     _vm.superheroes
       ? _c(
           "ul",
@@ -55946,16 +56036,19 @@ var client = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
   createData: function createData() {
     return client.get("superheroes/create-data");
   },
-  getData: function getData(page, callback) {
+  getData: function getData(_ref, callback) {
+    var page = _ref.page,
+        superpower = _ref.superpower;
     var params = {
-      page: page
+      page: page,
+      superpower: superpower
     };
     client.get("/superheroes", {
       params: params
     }).then(function (response) {
       callback(null, response.data);
     })["catch"](function (error) {
-      callback(error, error.response.data);
+      console.log(error); // callback(error, error.response.data);
     });
   }
 });

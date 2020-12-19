@@ -22,14 +22,27 @@ class Superhero extends Model
     {
         return $this->belongsToMany(Image::class);
     }
-    public function scopeWithSuperpower($query, $superpower)
+    public function scopeWithSuperpowers($query, $superpowers)
     {
-        return $query->whereHas('superpowers', function ($q) use ($superpower) {
-            return $q->where('id', $superpower);
-        });
+        if (isset($superpowers)) {
+            return $query->where(function ($q) use ($superpowers) {
+                function check($q, $superpowers, $i)
+                {
+                    if ($i < count($superpowers)) {
+                        $superpower = $superpowers[$i];
+                        $q = $q->whereHas(
+                            'superpowers',
+                            function ($q) use ($superpower) {
+                                return $q->where('id', $superpower);
+                            }
+                        );
+                        $q = check($q, $superpowers, ++$i);
+                    }
+                    return $q;
+                }
+                return check($q, $superpowers, 0);
+            });
+        }
+        return $query;
     }
-    // public function scopePopular($query)
-    // {
-    //     return $query->where('votes', '>', 100);
-    // }
 }

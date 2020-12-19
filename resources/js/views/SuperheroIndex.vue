@@ -3,18 +3,17 @@
         <div v-if="error" class="error">
             <p>{{ error }}</p>
         </div>
-        <!-- <form class="wrapper" @submit.prevent="sortBySuperpower($event)">
+        <form class="wrapper" @change="filterBySuperpower($event)">
             <div v-for="superpower in allSuperpowers" :key="superpower.id">
                 <input
                     type="checkbox"
                     :id="superpower.id"
-                    :value="superpower.name"
+                    :value="superpower.id"
                     v-model="checkedSuperpowers"
                 />
-                <label for="superpower.id"
-                    >{{superpower.name}}</label>
+                <label for="superpower.id">{{ superpower.name }}</label>
             </div>
-        </form> -->
+        </form>
         <ul v-if="superheroes">
             <li v-for="{ nickname, url, id } in superheroes" :key="id">
                 <router-link :to="{ name: 'superhero.show', params: { id } }"
@@ -24,8 +23,8 @@
                         :src="url[0]"
                         :alt="nickname"
                     />
-                    <strong>Nickname:{{ nickname }}</strong></router-link
-                >
+                    <strong>Nickname:{{ nickname }}</strong>
+                </router-link>
                 <router-link :to="{ name: 'superhero.edit', params: { id } }"
                     >Edit</router-link
                 >
@@ -108,22 +107,38 @@ export default {
         }
     },
     beforeRouteEnter(to, from, next) {
-        requestSuperhero.getData(to.query.page, (err, data) => {
-            next(vm => vm.setData(err, data));
+        requestSuperhero.getData(
+            {
+                page: to.query.page
+            },
+            (err, data) => {
+                next(vm => vm.setData(err, data));
+            }
+        );
+    },
+    created() {
+        requestSuperhero.createData().then(response => {
+            this.allSuperpowers = response.data.allSuperpowers;
         });
     },
     // when route changes and this component is already rendered,
     // the logic will be slightly different.
     beforeRouteUpdate(to, from, next) {
         this.superheroes = this.links = this.meta = null;
-        requestSuperhero.getData(to.query.page, (err, data) => {
-            this.setData(err, data);
-            next();
-        });
+        requestSuperhero.getData(
+            {
+                page: to.query.page,
+                superpower: this.checkedSuperpowers
+            },
+            (err, data) => {
+                this.setData(err, data);
+                next();
+            }
+        );
     },
     methods: {
-        goToPage(pageToGo) {
-            if (pageToGo === this.meta.current_page) {
+        goToPage(pageToGo, reload = false) {
+            if (pageToGo === this.meta.current_page && !reload) {
                 return;
             }
             this.$router.push({
@@ -151,9 +166,26 @@ export default {
             if (err) {
                 this.error = err.toString();
             } else {
+                // console.log(data);
                 this.superheroes = data;
                 this.links = links;
                 this.meta = meta;
+            }
+        },
+        filterBySuperpower() {
+            if (this.meta.current_page === 1) {
+                this.superheroes = this.links = this.meta = null;
+                requestSuperhero.getData(
+                    {
+                        superpower: this.checkedSuperpowers
+                    },
+                    (err, data) => {
+                        this.setData(err, data);
+                        // next();
+                    }
+                );
+            } else {
+                setTimeout(() => this.goToPage(1, true), 2000);
             }
         }
     }

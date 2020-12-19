@@ -20,15 +20,16 @@ export default {
     createData() {
         return client.get(`superheroes/create-data`);
     },
-    getData(page, callback) {
-        const params = { page };
+    getData({ page, superpower }, callback) {
+        const params = { page, superpower };
         client
             .get("/superheroes", { params })
             .then(response => {
                 callback(null, response.data);
             })
             .catch(error => {
-                callback(error, error.response.data);
+                console.log(error);
+                // callback(error, error.response.data);
             });
     }
 };

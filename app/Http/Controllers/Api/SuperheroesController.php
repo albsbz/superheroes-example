@@ -22,22 +22,9 @@ class SuperheroesController extends Controller
         $superpowers = $request->superpower;
 
         $response = Superhero::with(['images', 'superpowers'])
-            ->where(function ($q) use ($superpowers) {
-                function check($q, $superpowers, $i)
-                {
-                    if ($i < count($superpowers)) {
-                        $q = check($q->withSuperpower($superpowers[$i]), $superpowers, ++$i);
-                    }
-                    return $q;
-                }
-                return check($q, $superpowers, 0);
-            })
-            // ->withSuperpowers($superpowers)
-            // ->withSuperpower($superpowers[1])
-
-
-            ->get();
-        return json_encode($response);
+            ->withSuperpowers($superpowers)
+            ->paginate(5);
+        return SuperheroResource::collection($response);
     }
     /**
      * Show the form for creating a new resource.
