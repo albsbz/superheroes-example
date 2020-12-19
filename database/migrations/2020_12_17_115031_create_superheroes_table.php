@@ -18,8 +18,7 @@ class CreateSuperheroesTable extends Migration
             $table->string('nickname');
             $table->string('real_name');
             $table->string('catch_phrase');
-            //superpower
-            //images
+            $table->string('origin_description');
             $table->timestamps();
         });
     }

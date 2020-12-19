@@ -11,7 +11,8 @@ class Superhero extends Model
     protected $fillable = [
         'nickname',
         'real_name',
-        'catch_phrase'
+        'catch_phrase',
+        'origin_description'
     ];
     public function superpowers()
     {
@@ -21,4 +22,14 @@ class Superhero extends Model
     {
         return $this->belongsToMany(Image::class);
     }
+    public function scopeWithSuperpower($query, $superpower)
+    {
+        return $query->whereHas('superpowers', function ($q) use ($superpower) {
+            return $q->where('id', $superpower);
+        });
+    }
+    // public function scopePopular($query)
+    // {
+    //     return $query->where('votes', '>', 100);
+    // }
 }

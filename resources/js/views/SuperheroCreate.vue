@@ -22,6 +22,15 @@
                     v-model="superhero.catch_phrase"
                 />
             </div>
+            <div class="form-group">
+                <label for="origin-description">Origin description</label>
+                <textarea
+                    rows="5"
+                    cols="45"
+                    id="origin-description"
+                    v-model="superhero.origin_description"
+                />
+            </div>
             <div class="wrapper">
                 <div class="form-group img-wrapper">
                     <div v-for="image in superhero.allImages" :key="image.id">
@@ -68,6 +77,7 @@ export default {
                 nickname: "",
                 real_name: "",
                 catch_phrase: "",
+                origin_description: "",
                 images: [],
                 allImages: [],
                 superpowers: [],
@@ -85,6 +95,7 @@ export default {
                 nickname: this.superhero.nickname,
                 real_name: this.superhero.real_name,
                 catch_phrase: this.superhero.catch_phrase,
+                origin_description: this.superhero.origin_description,
                 images: this.checkedImages,
                 superpowers: this.selectedSuperpowers
             };
@@ -107,7 +118,7 @@ export default {
             .createData()
             .then(response => {
                 this.loaded = true;
-                console.log({ ...response.data });
+                // console.log({ ...response.data });
                 this.superhero = {
                     ...this.superhero,
                     ...{ ...response.data }

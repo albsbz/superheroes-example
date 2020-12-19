@@ -20,7 +20,7 @@ class SuperheroSeeder extends Seeder
         $superpowers = Superpower::all();
 
         Superhero::factory(50)->hasImages(2)->create()->each(function ($superhero) use ($superpowers) {
-            $superhero->superpowers()->attach($superpowers->random(2)->pluck('id')->toArray());
+            $superhero->superpowers()->attach($superpowers->random(rand(1, 3))->pluck('id')->toArray());
             // Image::factory(1)->eac
         });
     }

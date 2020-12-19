@@ -3,16 +3,29 @@
         <div v-if="error" class="error">
             <p>{{ error }}</p>
         </div>
-
+        <!-- <form class="wrapper" @submit.prevent="sortBySuperpower($event)">
+            <div v-for="superpower in allSuperpowers" :key="superpower.id">
+                <input
+                    type="checkbox"
+                    :id="superpower.id"
+                    :value="superpower.name"
+                    v-model="checkedSuperpowers"
+                />
+                <label for="superpower.id"
+                    >{{superpower.name}}</label>
+            </div>
+        </form> -->
         <ul v-if="superheroes">
             <li v-for="{ nickname, url, id } in superheroes" :key="id">
-                <img
-                    class="photo"
-                    v-if="url[0]"
-                    :src="url[0]"
-                    :alt="nickname"
-                />
-                <strong>Nickname:{{ nickname }}</strong>
+                <router-link :to="{ name: 'superhero.show', params: { id } }"
+                    ><img
+                        class="photo"
+                        v-if="url[0]"
+                        :src="url[0]"
+                        :alt="nickname"
+                    />
+                    <strong>Nickname:{{ nickname }}</strong></router-link
+                >
                 <router-link :to="{ name: 'superhero.edit', params: { id } }"
                     >Edit</router-link
                 >
@@ -43,25 +56,15 @@
     </div>
 </template>
 <script>
-import axios from "axios";
-
-const getData = (page, callback) => {
-    const params = { page };
-
-    axios
-        .get("/api/superheroes", { params })
-        .then(response => {
-            callback(null, response.data);
-        })
-        .catch(error => {
-            callback(error, error.response.data);
-        });
-};
+// import axios from "axios";
+import requestSuperhero from "../assets/api/superhero.js";
 
 export default {
     data() {
         return {
             superheroes: null,
+            allSuperpowers: null,
+            checkedSuperpowers: [],
             meta: null,
             links: {
                 first: null,
@@ -105,7 +108,7 @@ export default {
         }
     },
     beforeRouteEnter(to, from, next) {
-        getData(to.query.page, (err, data) => {
+        requestSuperhero.getData(to.query.page, (err, data) => {
             next(vm => vm.setData(err, data));
         });
     },
@@ -113,7 +116,7 @@ export default {
     // the logic will be slightly different.
     beforeRouteUpdate(to, from, next) {
         this.superheroes = this.links = this.meta = null;
-        getData(to.query.page, (err, data) => {
+        requestSuperhero.getData(to.query.page, (err, data) => {
             this.setData(err, data);
             next();
         });

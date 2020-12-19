@@ -8,7 +8,7 @@ use App\Models\Superpower;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SuperheroResource;
-use phpDocumentor\Reflection\Types\Null_;
+
 
 class SuperheroesController extends Controller
 {
@@ -17,11 +17,27 @@ class SuperheroesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // return SuperheroResource::collection(Superhero::paginate(5));
-        return SuperheroResource::collection(Superhero::with('images')->paginate(5));
-        // return Superhero::find(1)->images->pluck('url');
+        $superpowers = $request->superpower;
+
+        $response = Superhero::with(['images', 'superpowers'])
+            ->where(function ($q) use ($superpowers) {
+                function check($q, $superpowers, $i)
+                {
+                    if ($i < count($superpowers)) {
+                        $q = check($q->withSuperpower($superpowers[$i]), $superpowers, ++$i);
+                    }
+                    return $q;
+                }
+                return check($q, $superpowers, 0);
+            })
+            // ->withSuperpowers($superpowers)
+            // ->withSuperpower($superpowers[1])
+
+
+            ->get();
+        return json_encode($response);
     }
     /**
      * Show the form for creating a new resource.
@@ -45,13 +61,18 @@ class SuperheroesController extends Controller
             'nickname' => 'required',
             'real_name' => 'required',
             'catch_phrase' => 'required',
+            'origin_description' => 'required',
             'images' => 'nullable',
             'superpowers' => 'nullable',
         ]);
         $hero =  Superhero::create($data);
 
-        $hero->images()->attach($data['images']);
-        $hero->superpowers()->attach($data['superpowers']);
+        $hero
+            ->images()
+            ->attach($data['images']);
+        $hero
+            ->superpowers()
+            ->attach($data['superpowers']);
 
         return response(201);
     }
@@ -64,10 +85,12 @@ class SuperheroesController extends Controller
      */
     public function show($id)
     {
-        $hero =  Superhero::where('id', $id)->select('id', 'nickname', 'real_name', 'catch_phrase')->with(['images', 'superpowers'])->get()->first();
-        $allImages = ['allImages' => Image::all('id', 'url')];
-        $allSuperpowers = ['allSuperpowers' => Superpower::all('id', 'name')];
-        return json_encode(collect()->merge($hero)->merge($allImages)->merge($allSuperpowers));
+        $hero =  Superhero::where('id', $id)
+            ->select('id', 'nickname', 'real_name', 'catch_phrase', 'origin_description')
+            ->with(['images', 'superpowers'])
+            ->get()
+            ->first();
+        return json_encode($hero);
     }
 
     /**
@@ -95,6 +118,7 @@ class SuperheroesController extends Controller
             'nickname' => 'required',
             'real_name' => 'required',
             'catch_phrase' => 'required',
+            'origin_description' => 'required',
             'images' => 'nullable',
             'superpowers' => 'nullable',
         ]);
@@ -111,7 +135,7 @@ class SuperheroesController extends Controller
         $relatedSuperpowers->attach($data['superpowers']);
 
 
-        return $this->show($id);
+        return json_encode($hero);
     }
 
     /**

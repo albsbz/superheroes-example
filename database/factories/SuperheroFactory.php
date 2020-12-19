@@ -25,6 +25,7 @@ class SuperheroFactory extends Factory
             'nickname' => $this->faker->name,
             'real_name' => "{$this->faker->firstName} {$this->faker->lastName}",
             'catch_phrase' => $this->faker->realText(30),
+            'origin_description' => $this->faker->realText(150),
         ];
     }
 }

@@ -19,5 +19,16 @@ export default {
     },
     createData() {
         return client.get(`superheroes/create-data`);
+    },
+    getData(page, callback) {
+        const params = { page };
+        client
+            .get("/superheroes", { params })
+            .then(response => {
+                callback(null, response.data);
+            })
+            .catch(error => {
+                callback(error, error.response.data);
+            });
     }
 };

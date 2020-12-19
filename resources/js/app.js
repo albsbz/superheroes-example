@@ -20,6 +20,7 @@ import UsersCreate from "./views/UsersCreate";
 import SuperheroIndex from "./views/SuperheroIndex";
 import SuperheroEdit from "./views/SuperheroEdit";
 import SuperheroCreate from "./views/SuperheroCreate";
+import SuperheroShow from "./views/SuperheroShow";
 
 const router = new VueRouter({
     mode: "history",
@@ -54,6 +55,11 @@ const router = new VueRouter({
             path: "/superheroes",
             name: "superhero.index",
             component: SuperheroIndex
+        },
+        {
+            path: "/superhero/:id",
+            name: "superhero.show",
+            component: SuperheroShow
         },
         {
             path: "/superhero/:id/edit",

@@ -28,5 +28,11 @@ class SuperpowerSeeder extends Seeder
         $Superpower->insert([
             'name' => 'Mega strength'
         ]);
+        $Superpower->insert([
+            'name' => 'Cool suit'
+        ]);
+        $Superpower->insert([
+            'name' => 'Swim like fish'
+        ]);
     }
 }
