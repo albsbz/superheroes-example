@@ -75,9 +75,7 @@ class SuperheroesController extends Controller
         $hero =  Superhero::where('id', $id)
             ->select('id', 'nickname', 'real_name', 'catch_phrase', 'origin_description')
             ->with(['images', 'superpowers'])->first();
-        // dd($hero->id);
         $superpowers = $hero->superpowers->toArray();
-        // dd($superpowers);
         $recomended = Superhero::where('id', '!=', $hero->id)
             ->with(['superpowers'])
             ->whereHas('superpowers', function ($q) use ($superpowers) {
@@ -86,9 +84,7 @@ class SuperheroesController extends Controller
             ->take(3)
             ->select('nickname', 'id')
             ->get();
-        // ->pluck('nickname', 'id');
         $response = collect()->merge($hero)->merge(['recomended' => $recomended]);
-        // dd($response);
         return json_encode($response);
     }
 

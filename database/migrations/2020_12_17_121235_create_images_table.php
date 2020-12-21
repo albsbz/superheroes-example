@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateImagesTable extends Migration
 {
@@ -16,8 +17,6 @@ class CreateImagesTable extends Migration
         Schema::create('images', function (Blueprint $table) {
             $table->id();
             $table->string('url');
-            // $table->bigInteger('superhero_id')->unsigned();
-            // $table->foreign('superhero_id')->references('id')->on('superheroes');
             $table->timestamps();
         });
         Schema::create('image_superhero', function (Blueprint $table) {
@@ -36,8 +35,9 @@ class CreateImagesTable extends Migration
      */
     public function down()
     {
-
-        Schema::dropIfExists('images_superheroes');
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('image_superhero');
         Schema::dropIfExists('images');
+        Schema::enableForeignKeyConstraints();
     }
 }

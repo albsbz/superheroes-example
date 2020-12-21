@@ -1,17 +1,18 @@
 <template>
     <div>
-        <h1>Vue Router Demo App</h1>
+        <h1>Superheroes App</h1>
 
         <p>
             <router-link :to="{ name: 'home' }">Home</router-link> |
-            <router-link :to="{ name: 'hello' }">Hello World</router-link>
-            <router-link :to="{ name: 'users.index' }">Users</router-link>
+
             <router-link :to="{ name: 'superhero.index' }"
                 >All superheroes</router-link
             >
+            |
             <router-link :to="{ name: 'superhero.favorites' }"
                 >Favorite superheroes</router-link
             >
+            |
             <router-link :to="{ name: 'superhero.compare' }"
                 >Compare superheroes</router-link
             >

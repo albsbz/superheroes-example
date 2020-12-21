@@ -42,6 +42,7 @@
         <div>Real name: {{ superhero.real_name }}"</div>
         <div>Catch phrase: {{ superhero.catch_phrase }}</div>
         <div>Origin description: {{ superhero.origin_description }}</div>
+        <button @click="deleteUser">Delete user</button>
     </div>
 </template>
 <script>
@@ -63,7 +64,6 @@ export default {
     },
     watch: {
         $route(to, from) {
-            console.log(to);
             requestSuperhero
                 .find(to.params.id)
                 .then(response => {
@@ -73,15 +73,18 @@ export default {
                 .catch(err => {
                     this.$router.push({ name: "404" });
                 });
-
-            //  requestSuperhero.getIndexData(
-            //     {
-            //         page: to.query.page
-            //     },
-            //     (err, data) => {
-            //         next(vm => vm.setData(err, data));
-            //     }
-            // );
+        }
+    },
+    methods: {
+        deleteUser() {
+            requestSuperhero
+                .delete(this.$route.params.id)
+                .then(response => {
+                    this.$router.push({ name: "superhero.index" });
+                })
+                .catch(err => {
+                    this.$router.push({ name: "404" });
+                });
         }
     },
     created() {
