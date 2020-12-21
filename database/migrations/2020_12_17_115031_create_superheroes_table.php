@@ -19,6 +19,7 @@ class CreateSuperheroesTable extends Migration
             $table->string('real_name');
             $table->string('catch_phrase');
             $table->string('origin_description');
+            $table->boolean('favorites')->default(0);
             $table->timestamps();
         });
     }

@@ -9,10 +9,10 @@
             <router-link :to="{ name: 'superhero.index' }"
                 >All superheroes</router-link
             >
-            <router-link :to="{ name: 'users.index' }"
+            <router-link :to="{ name: 'superhero.favorites' }"
                 >Favorite superheroes</router-link
             >
-            <router-link :to="{ name: 'users.index' }"
+            <router-link :to="{ name: 'superhero.compare' }"
                 >Compare superheroes</router-link
             >
         </p>

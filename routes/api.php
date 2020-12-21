@@ -37,3 +37,6 @@ Route::get('/superheroes/{id}', [SuperheroesController::class, 'show']);
 Route::put('/superheroes/{id}', [SuperheroesController::class, 'update']);
 Route::delete('/superheroes/{id}', [SuperheroesController::class, 'destroy']);
 Route::post('/superheroes', [SuperheroesController::class, 'store']);
+
+Route::get('/favorite-superheroes', [SuperheroesController::class, 'getAll']);
+Route::put('/favorite-superheroes', [SuperheroesController::class, 'setFavorites']);

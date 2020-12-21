@@ -1,5 +1,17 @@
 <template>
     <div>
+        <div>
+            You may also like:
+            <span v-for="(rec, index) in superhero.recomended" :key="rec.id">
+                <router-link
+                    :to="{ name: 'superhero.show', params: { id: rec.id } }"
+                    >{{ rec.nickname }}</router-link
+                ><span
+                    v-if="index != Object.keys(superhero.recomended).length - 1"
+                    >,
+                </span>
+            </span>
+        </div>
         <div class="img-wrapper">
             <img
                 v-for="image in superhero.images"
@@ -12,14 +24,23 @@
 
         <div>
             Superpowers:
-            <p v-for="superpower in superhero.superpowers" :key="superpower.id">
-                {{ superpower.name }}
-            </p>
+            <span
+                v-for="(superpower, index) in superhero.superpowers"
+                :key="superpower.id"
+            >
+                {{ superpower.name
+                }}<span
+                    v-if="
+                        index != Object.keys(superhero.superpowers).length - 1
+                    "
+                    >,
+                </span>
+            </span>
         </div>
         <div>Nickname: {{ superhero.nickname }}</div>
 
         <div>Real name: {{ superhero.real_name }}"</div>
-        <div>Catch phrase: {{ superhero.catch_phra }}</div>
+        <div>Catch phrase: {{ superhero.catch_phrase }}</div>
         <div>Origin description: {{ superhero.origin_description }}</div>
     </div>
 </template>
@@ -40,7 +61,29 @@ export default {
             }
         };
     },
+    watch: {
+        $route(to, from) {
+            console.log(to);
+            requestSuperhero
+                .find(to.params.id)
+                .then(response => {
+                    this.loaded = true;
+                    this.superhero = { ...this.superhero, ...response.data };
+                })
+                .catch(err => {
+                    this.$router.push({ name: "404" });
+                });
 
+            //  requestSuperhero.getIndexData(
+            //     {
+            //         page: to.query.page
+            //     },
+            //     (err, data) => {
+            //         next(vm => vm.setData(err, data));
+            //     }
+            // );
+        }
+    },
     created() {
         requestSuperhero
             .find(this.$route.params.id)

@@ -21,6 +21,8 @@ import SuperheroIndex from "./views/SuperheroIndex";
 import SuperheroEdit from "./views/SuperheroEdit";
 import SuperheroCreate from "./views/SuperheroCreate";
 import SuperheroShow from "./views/SuperheroShow";
+import SuperheroFavorites from "./views/SuperheroFavorites";
+import SuperheroCompare from "./views/SuperheroCompare";
 
 const router = new VueRouter({
     mode: "history",
@@ -70,6 +72,16 @@ const router = new VueRouter({
             path: "/superhero/create",
             name: "superhero.create",
             component: SuperheroCreate
+        },
+        {
+            path: "/favorite-superheroes",
+            name: "superhero.favorites",
+            component: SuperheroFavorites
+        },
+        {
+            path: "/compare-superheroes",
+            name: "superhero.compare",
+            component: SuperheroCompare
         },
         { path: "/404", name: "404", component: NotFound },
         { path: "*", redirect: "/404" }

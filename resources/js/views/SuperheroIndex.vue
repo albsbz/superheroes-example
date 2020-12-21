@@ -107,7 +107,7 @@ export default {
         }
     },
     beforeRouteEnter(to, from, next) {
-        requestSuperhero.getData(
+        requestSuperhero.getIndexData(
             {
                 page: to.query.page
             },
@@ -125,7 +125,7 @@ export default {
     // the logic will be slightly different.
     beforeRouteUpdate(to, from, next) {
         this.superheroes = this.links = this.meta = null;
-        requestSuperhero.getData(
+        requestSuperhero.getIndexData(
             {
                 page: to.query.page,
                 superpower: this.checkedSuperpowers
@@ -175,7 +175,7 @@ export default {
         filterBySuperpower() {
             if (this.meta.current_page === 1) {
                 this.superheroes = this.links = this.meta = null;
-                requestSuperhero.getData(
+                requestSuperhero.getIndexData(
                     {
                         superpower: this.checkedSuperpowers
                     },

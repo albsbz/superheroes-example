@@ -20,7 +20,13 @@ export default {
     createData() {
         return client.get(`superheroes/create-data`);
     },
-    getData({ page, superpower }, callback) {
+    getAll() {
+        return client.get(`favorite-superheroes`);
+    },
+    setFavorites(favorites) {
+        return client.put(`favorite-superheroes`, { favorites });
+    },
+    getIndexData({ page, superpower }, callback) {
         const params = { page, superpower };
         client
             .get("/superheroes", { params })
@@ -28,8 +34,8 @@ export default {
                 callback(null, response.data);
             })
             .catch(error => {
-                console.log(error);
-                // callback(error, error.response.data);
+                // console.log(error);
+                callback(error, error.response.data);
             });
     }
 };

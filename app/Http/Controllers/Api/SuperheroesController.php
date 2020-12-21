@@ -74,10 +74,22 @@ class SuperheroesController extends Controller
     {
         $hero =  Superhero::where('id', $id)
             ->select('id', 'nickname', 'real_name', 'catch_phrase', 'origin_description')
-            ->with(['images', 'superpowers'])
-            ->get()
-            ->first();
-        return json_encode($hero);
+            ->with(['images', 'superpowers'])->first();
+        // dd($hero->id);
+        $superpowers = $hero->superpowers->toArray();
+        // dd($superpowers);
+        $recomended = Superhero::where('id', '!=', $hero->id)
+            ->with(['superpowers'])
+            ->whereHas('superpowers', function ($q) use ($superpowers) {
+                return $q->whereIn('id', $superpowers);
+            })
+            ->take(3)
+            ->select('nickname', 'id')
+            ->get();
+        // ->pluck('nickname', 'id');
+        $response = collect()->merge($hero)->merge(['recomended' => $recomended]);
+        // dd($response);
+        return json_encode($response);
     }
 
     /**
@@ -142,5 +154,22 @@ class SuperheroesController extends Controller
         $allImages = ['allImages' => Image::all('id', 'url')];
         $allSuperpowers = ['allSuperpowers' => Superpower::all('id', 'name')];
         return json_encode(collect()->merge($allImages)->merge($allSuperpowers));
+    }
+    public function getAll()
+    {
+
+        return json_encode(Superhero::with(['images', 'superpowers'])->get()->all());
+    }
+    public function setFavorites(Request $request)
+    {
+
+        foreach ($request->favorites as $favorite) {
+            $superhero = Superhero::find($favorite);
+            $superhero->favorites = 1;
+            $superhero->save();
+        }
+
+
+        return response(null, 204);
     }
 }
