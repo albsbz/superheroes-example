@@ -12,8 +12,6 @@ Vue.use(VueRouter);
 
 import App from "./views/App";
 
-import Home from "./views/Home";
-
 import NotFound from "./views/NotFound";
 
 import SuperheroIndex from "./views/SuperheroIndex";
@@ -29,7 +27,7 @@ const router = new VueRouter({
         {
             path: "/",
             name: "home",
-            component: Home
+            component: SuperheroIndex
         },
 
         {

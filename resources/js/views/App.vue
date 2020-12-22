@@ -3,8 +3,6 @@
         <h1>Superheroes App</h1>
 
         <p>
-            <router-link :to="{ name: 'home' }">Home</router-link> |
-
             <router-link :to="{ name: 'superhero.index' }"
                 >All superheroes</router-link
             >
