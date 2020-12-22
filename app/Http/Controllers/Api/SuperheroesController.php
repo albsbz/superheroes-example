@@ -80,15 +80,20 @@ class SuperheroesController extends Controller
         $hero =  Superhero::where('id', $id)
             ->select('id', 'nickname', 'real_name', 'catch_phrase', 'origin_description')
             ->with(['images', 'superpowers'])->first();
-        $superpowers = [] && $hero->superpowers->toArray();
-        $recomended = [] && Superhero::where('id', '!=', $hero->id)
-            ->with(['superpowers'])
-            ->whereHas('superpowers', function ($q) use ($superpowers) {
-                return $q->whereIn('id', $superpowers);
-            })
-            ->take(3)
-            ->select('nickname', 'id')
-            ->get();
+        $recomended = null;
+        if (isset($hero->superpowers)) {
+
+
+            $superpowers = $hero->superpowers->toArray();
+            $recomended = Superhero::where('id', '!=', $hero->id)
+                ->with(['superpowers'])
+                ->whereHas('superpowers', function ($q) use ($superpowers) {
+                    return $q->whereIn('id', $superpowers);
+                })
+                ->take(3)
+                ->select('nickname', 'id')
+                ->get();
+        }
         $response = collect()->merge($hero)->merge(['recomended' => $recomended]);
         return json_encode($response);
     }
@@ -124,6 +129,9 @@ class SuperheroesController extends Controller
         ]);
 
         $hero = Superhero::find($id);
+        if (!isset($hero)) {
+            return response()->json([], 400);
+        };
         $hero->update($data);
         $relatedImages = $hero->images();
         $relatedImages->detach();
@@ -149,7 +157,11 @@ class SuperheroesController extends Controller
      */
     public function destroy($id)
     {
-        Superhero::find($id)->delete();
+        $hero = Superhero::find($id);
+        if (!isset($hero)) {
+            return response()->json([], 400);
+        };
+        $hero->delete();
 
         return response()->noContent();
     }

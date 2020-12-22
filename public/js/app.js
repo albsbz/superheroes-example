@@ -2297,6 +2297,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // import api from "../assets/api/users";
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2333,20 +2343,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         origin_description: this.superhero.origin_description,
         images: this.checkedImages,
         superpowers: this.selectedSuperpowers
-      }; // console.log(updatedData);
-
+      };
       _assets_api_superhero_js__WEBPACK_IMPORTED_MODULE_0__["default"].update(this.superhero.id, updatedData).then(function (response) {
+        _this.errors = [];
         _this.message = "Superhero updated";
         setTimeout(function () {
-          return _this.message = null;
+          _this.message = null;
         }, 2000);
         _this.superhero = _objectSpread(_objectSpread({}, _this.superhero), response.data);
       })["catch"](function (error) {
-        // console.log(error);
         _this.errors = error.response.data.errors;
-        setTimeout(function () {
-          return _this.errors = null;
-        }, 2000);
       }).then(function (_) {
         return _this.saving = false;
       });
@@ -2361,6 +2367,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           return _this2.$router.push({
             name: "superhero.index"
           });
+        }, 2000);
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+        setTimeout(function () {
+          return _this2.errors = null;
         }, 2000);
       });
     }
@@ -7317,7 +7328,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".form-group label[data-v-9f8580e0] {\n  display: block;\n}\n.alert[data-v-9f8580e0] {\n  background: #ff9999;\n  color: #990000;\n  padding: 1rem;\n  margin-bottom: 1rem;\n  width: 50%;\n  border: 1px solid #990000;\n  border-radius: 5px;\n}\n.photo[data-v-9f8580e0] {\n  width: 128px;\n}\n.wrapper[data-v-9f8580e0] {\n  border: 1px solid black;\n  height: 30vh;\n  overflow: auto;\n}\n.img-wrapper[data-v-9f8580e0] {\n  display: flex;\n  width: 80vw;\n  margin: 0 auto;\n  flex-wrap: wrap;\n}\n.img-wrapper > div[data-v-9f8580e0] {\n  margin: 10px;\n}", ""]);
+exports.push([module.i, ".form-group label[data-v-9f8580e0] {\n  display: block;\n}\n.alert[data-v-9f8580e0] {\n  background: #ff9999;\n  color: #990000;\n  padding: 1rem;\n  margin-bottom: 1rem;\n  width: 50%;\n  border: 1px solid #990000;\n  border-radius: 5px;\n}\n.photo[data-v-9f8580e0] {\n  width: 128px;\n}\n.wrapper[data-v-9f8580e0] {\n  border: 1px solid black;\n  height: 30vh;\n  overflow: auto;\n}\n.img-wrapper[data-v-9f8580e0] {\n  display: flex;\n  width: 80vw;\n  margin: 0 auto;\n  flex-wrap: wrap;\n}\n.img-wrapper > div[data-v-9f8580e0] {\n  margin: 10px;\n}\n.red-border[data-v-9f8580e0] {\n  border-color: red;\n}", ""]);
 
 // exports
 
@@ -39876,7 +39887,9 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "form-group" }, [
-              _c("label", { attrs: { for: "nickname" } }, [_vm._v("Nickname")]),
+              _c("label", { attrs: { for: "nickname" } }, [
+                _vm._v("Nickname *")
+              ]),
               _vm._v(" "),
               _c("input", {
                 directives: [
@@ -39887,6 +39900,7 @@ var render = function() {
                     expression: "superhero.nickname"
                   }
                 ],
+                class: { "red-border": _vm.errors["nickname"] },
                 attrs: { id: "nickname" },
                 domProps: { value: _vm.superhero.nickname },
                 on: {
@@ -39902,7 +39916,7 @@ var render = function() {
             _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "real-name" } }, [
-                _vm._v("Real name")
+                _vm._v("Real name *")
               ]),
               _vm._v(" "),
               _c("input", {
@@ -39914,6 +39928,7 @@ var render = function() {
                     expression: "superhero.real_name"
                   }
                 ],
+                class: { "red-border": _vm.errors["real_name"] },
                 attrs: { id: "real-name" },
                 domProps: { value: _vm.superhero.real_name },
                 on: {
@@ -39929,7 +39944,7 @@ var render = function() {
             _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "catch-phrase" } }, [
-                _vm._v("Catch phrase")
+                _vm._v("Catch phrase *")
               ]),
               _vm._v(" "),
               _c("input", {
@@ -39941,6 +39956,7 @@ var render = function() {
                     expression: "superhero.catch_phrase"
                   }
                 ],
+                class: { "red-border": _vm.errors["catch_phrase"] },
                 attrs: { id: "catch-phrase", type: "text" },
                 domProps: { value: _vm.superhero.catch_phrase },
                 on: {
@@ -39968,6 +39984,7 @@ var render = function() {
                     expression: "superhero.origin_description"
                   }
                 ],
+                class: { "red-border": _vm.errors["origin_description"] },
                 attrs: { rows: "5", cols: "45", id: "origin-description" },
                 domProps: { value: _vm.superhero.origin_description },
                 on: {

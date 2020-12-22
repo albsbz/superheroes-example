@@ -9,19 +9,28 @@
         <div v-if="!loaded">Loading...</div>
         <form @submit.prevent="onSubmit($event)" v-else>
             <div class="form-group">
-                <label for="nickname">Nickname</label>
-                <input id="nickname" v-model="superhero.nickname" />
+                <label for="nickname">Nickname *</label>
+                <input
+                    id="nickname"
+                    v-model="superhero.nickname"
+                    :class="{ 'red-border': errors['nickname'] }"
+                />
             </div>
             <div class="form-group">
-                <label for="real-name">Real name</label>
-                <input id="real-name" v-model="superhero.real_name" />
+                <label for="real-name">Real name *</label>
+                <input
+                    id="real-name"
+                    v-model="superhero.real_name"
+                    :class="{ 'red-border': errors['real_name'] }"
+                />
             </div>
             <div class="form-group">
-                <label for="catch-phrase">Catch phrase</label>
+                <label for="catch-phrase">Catch phrase *</label>
                 <input
                     id="catch-phrase"
                     type="text"
                     v-model="superhero.catch_phrase"
+                    :class="{ 'red-border': errors['catch_phrase'] }"
                 />
             </div>
             <div class="form-group">
@@ -31,6 +40,7 @@
                     cols="45"
                     id="origin-description"
                     v-model="superhero.origin_description"
+                    :class="{ 'red-border': errors['origin_description'] }"
                 />
             </div>
             <div class="wrapper">
@@ -91,11 +101,11 @@ export default {
                 superpowers: [],
                 allSuperpowers: []
             },
+
             checkedImages: [],
             selectedSuperpowers: []
         };
     },
-
     methods: {
         onSubmit(event) {
             this.saving = true;
@@ -107,30 +117,37 @@ export default {
                 images: this.checkedImages,
                 superpowers: this.selectedSuperpowers
             };
-            // console.log(updatedData);
+
             requestSuperhero
                 .update(this.superhero.id, updatedData)
                 .then(response => {
+                    this.errors = [];
                     this.message = "Superhero updated";
-                    setTimeout(() => (this.message = null), 2000);
+                    setTimeout(() => {
+                        this.message = null;
+                    }, 2000);
                     this.superhero = { ...this.superhero, ...response.data };
                 })
                 .catch(error => {
-                    // console.log(error);
                     this.errors = error.response.data.errors;
-                    setTimeout(() => (this.errors = null), 2000);
                 })
                 .then(_ => (this.saving = false));
         },
         onDelete() {
             this.saving = true;
-            requestSuperhero.delete(this.superhero.id).then(response => {
-                this.message = "Superhero deleted";
-                setTimeout(
-                    () => this.$router.push({ name: "superhero.index" }),
-                    2000
-                );
-            });
+            requestSuperhero
+                .delete(this.superhero.id)
+                .then(response => {
+                    this.message = "Superhero deleted";
+                    setTimeout(
+                        () => this.$router.push({ name: "superhero.index" }),
+                        2000
+                    );
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    setTimeout(() => (this.errors = null), 2000);
+                });
         }
     },
     created() {
@@ -197,5 +214,8 @@ $darkRed: darken($red, 50%);
 }
 .img-wrapper > div {
     margin: 10px;
+}
+.red-border {
+    border-color: red;
 }
 </style>
