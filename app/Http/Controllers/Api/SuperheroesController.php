@@ -7,6 +7,7 @@ use App\Models\Superhero;
 use App\Models\Superpower;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Facade\FlareClient\Http\Response;
 use App\Http\Resources\SuperheroResource;
 
 
@@ -54,14 +55,18 @@ class SuperheroesController extends Controller
         ]);
         $hero =  Superhero::create($data);
 
-        $hero
-            ->images()
-            ->attach($data['images']);
-        $hero
-            ->superpowers()
-            ->attach($data['superpowers']);
+        if (isset($data['images'])) {
+            $hero
+                ->images()
+                ->attach($data['images']);
+        }
+        if (isset($data['images'])) {
+            $hero
+                ->superpowers()
+                ->attach($data['superpowers']);
+        }
 
-        return response(201);
+        return response()->noContent();
     }
 
     /**
@@ -75,8 +80,8 @@ class SuperheroesController extends Controller
         $hero =  Superhero::where('id', $id)
             ->select('id', 'nickname', 'real_name', 'catch_phrase', 'origin_description')
             ->with(['images', 'superpowers'])->first();
-        $superpowers = $hero->superpowers->toArray();
-        $recomended = Superhero::where('id', '!=', $hero->id)
+        $superpowers = [] && $hero->superpowers->toArray();
+        $recomended = [] && Superhero::where('id', '!=', $hero->id)
             ->with(['superpowers'])
             ->whereHas('superpowers', function ($q) use ($superpowers) {
                 return $q->whereIn('id', $superpowers);
@@ -122,12 +127,15 @@ class SuperheroesController extends Controller
         $hero->update($data);
         $relatedImages = $hero->images();
         $relatedImages->detach();
-
-        $relatedImages->attach($data['images']);
+        if (isset($data['images'])) {
+            $relatedImages->attach($data['images']);
+        }
 
         $relatedSuperpowers = $hero->superpowers();
         $relatedSuperpowers->detach();
-        $relatedSuperpowers->attach($data['superpowers']);
+        if (isset($data['superpowers'])) {
+            $relatedSuperpowers->attach($data['superpowers']);
+        }
 
 
         return json_encode($hero);
@@ -143,7 +151,7 @@ class SuperheroesController extends Controller
     {
         Superhero::find($id)->delete();
 
-        return response(null, 204);
+        return response()->noContent();
     }
     public function createData()
     {
@@ -166,6 +174,6 @@ class SuperheroesController extends Controller
         }
 
 
-        return response(null, 204);
+        return response()->noContent();
     }
 }

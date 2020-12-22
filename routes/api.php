@@ -25,11 +25,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/users', [UsersController::class, 'index']);
-Route::get('/users/{user}', [UsersController::class, 'show']);
-Route::put('/users/{user}', [UsersController::class, 'update']);
-Route::delete('/users/{user}', [UsersController::class, 'destroy']);
-Route::post('/users', [UsersController::class, 'store']);
 
 Route::get('/superheroes/', [SuperheroesController::class, 'index']);
 Route::get('/superheroes/create-data', [SuperheroesController::class, 'createData']);
