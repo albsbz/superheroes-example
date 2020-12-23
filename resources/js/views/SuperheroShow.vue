@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>
+        <div class="subtitle-1">
             You may also like:
             <span v-for="(rec, index) in superhero.recomended" :key="rec.id">
                 <router-link
@@ -12,41 +12,66 @@
                 </span>
             </span>
         </div>
-        <div class="img-wrapper">
-            <img
-                v-for="image in superhero.images"
-                :key="image.id"
-                :src="image.url"
-                :alt="'image_' + image.id"
-                class="photo"
-            />
-        </div>
 
-        <div>
-            Superpowers:
-            <span
-                v-for="(superpower, index) in superhero.superpowers"
-                :key="superpower.id"
-            >
-                {{ superpower.name
-                }}<span
-                    v-if="
-                        index != Object.keys(superhero.superpowers).length - 1
-                    "
-                    >,
-                </span>
-            </span>
-        </div>
-        <div>Nickname: {{ superhero.nickname }}</div>
+        <template>
+            <v-card>
+                <div class="carousel-wrapper">
+                    <v-carousel
+                        value="0"
+                        class="carousel"
+                        height="auto"
+                        hide-delimiters
+                    >
+                        <v-carousel-item
+                            v-for="image in superhero.images"
+                            :key="image.id"
+                            class="img-wrapper"
+                        >
+                            <v-img
+                                contain
+                                :src="image.url"
+                                :alt="'image_' + image.id"
+                                class="photo"
+                            />
+                        </v-carousel-item>
+                    </v-carousel>
+                </div>
 
-        <div>Real name: {{ superhero.real_name }}"</div>
-        <div>Catch phrase: {{ superhero.catch_phrase }}</div>
-        <div>Origin description: {{ superhero.origin_description }}</div>
-        <button @click="deleteUser">Delete user</button>
+                <v-card-title> {{ superhero.nickname }}</v-card-title>
+                <v-card-text>
+                    <div class="my-4 subtitle-1">
+                        Real name: {{ superhero.real_name }}"
+                    </div>
+                    <div>Catch phrase: {{ superhero.catch_phrase }}</div>
+                    Superpowers:
+                    <span
+                        v-for="(superpower, index) in superhero.superpowers"
+                        :key="superpower.id"
+                    >
+                        {{ superpower.name
+                        }}<span
+                            v-if="
+                                index !=
+                                    Object.keys(superhero.superpowers).length -
+                                        1
+                            "
+                        >
+                            ,
+                        </span>
+                    </span>
+                    Origin description: {{ superhero.origin_description }}
+                </v-card-text>
+
+                <v-card-actions>
+                    <v-btn color="error" text @click="deleteSuperhero">
+                        Delete superhero
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </template>
     </div>
 </template>
 <script>
-// import api from "../assets/api/users";
 import requestSuperhero from "../assets/api/superhero.js";
 export default {
     data() {
@@ -76,7 +101,7 @@ export default {
         }
     },
     methods: {
-        deleteUser() {
+        deleteSuperhero() {
             requestSuperhero
                 .delete(this.$route.params.id)
                 .then(response => {
@@ -102,15 +127,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .photo {
-    width: 128px;
+    height: 200px;
 }
-.img-wrapper {
-    display: flex;
-    width: 80vw;
+.carousel-wrapper {
+    max-width: 50vw;
     margin: 0 auto;
-    flex-wrap: wrap;
-}
-.img-wrapper > img {
-    margin: 10px;
 }
 </style>

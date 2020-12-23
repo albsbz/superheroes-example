@@ -3,30 +3,22 @@
         <div v-if="message" class="alert">{{ message }}</div>
         <div>
             <p>Favorite superheroes:</p>
-            <span
-                v-for="(superhero, index) in superheroesFiltered"
-                :key="superhero.id"
-            >
-                {{ superhero.nickname
-                }}<span
-                    v-if="index != Object.keys(superheroesFiltered).length - 1"
-                    >,
-                </span>
-            </span>
 
-            <p>Add to favorites:</p>
             <form @submit.prevent="onSubmit($event)">
-                <select v-model="selectedFavorites" multiple size="20">
-                    <option
-                        v-for="superhero in superheroes"
-                        v-bind:value="superhero.id"
-                        :key="superhero.id"
-                    >
-                        {{ superhero.nickname }}
-                    </option>
-                </select>
+                <v-select
+                    v-model="selectedFavorites"
+                    :items="superheroes"
+                    item-value="id"
+                    attach
+                    chips
+                    item-text="nickname"
+                    multiple
+                ></v-select>
+                <v-btn color="primary" type="submit" :disabled="saving"
+                    >Save</v-btn
+                >
 
-                <button type="submit" :disabled="saving">Save</button>
+                <!-- <button ></button> -->
             </form>
         </div>
     </div>

@@ -1,53 +1,100 @@
 <template>
     <div class="main-wrapper">
-        <div clas="with-border">
-            <p>Add superhero to compare:</p>
-            <select v-model="superheroesToCompare" multiple size="20">
-                <option
-                    v-for="superhero in superheroes"
-                    v-bind:value="superhero.id"
-                    :key="superhero.id"
-                >
-                    {{ superhero.nickname }}
-                </option>
-            </select>
-        </div>
+        <v-select
+            v-model="superheroesToCompare"
+            :items="superheroes"
+            label="Superheroes to compare"
+            item-value="id"
+            item-text="nickname"
+            multiple
+            size="10"
+        >
+            <template v-slot:prepend-item>
+                <v-list-item ripple @click="toggle">
+                    <v-list-item-action>
+                        <v-icon
+                            :color="
+                                superheroesToCompare.length > 0
+                                    ? 'indigo darken-4'
+                                    : ''
+                            "
+                        >
+                            {{ icon }}
+                        </v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>
+                            Select All
+                        </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-divider class="mt-2"></v-divider>
+            </template>
+            <template v-slot:append-item>
+                <v-divider class="mb-2"></v-divider>
+                <v-list-item disabled>
+                    <v-list-item-avatar color="grey lighten-3">
+                        <v-icon>
+                            mdi-alpha-s-circle
+                        </v-icon>
+                    </v-list-item-avatar>
 
-        <!-- <div class="img-wrapper">
-            <img :src="images[0].url" :alt="images[0].name" class="photo" />
-        </div>
+                    <v-list-item-content v-if="likesAllSuperhero">
+                        <v-list-item-title>
+                            Holy smokes, someone call the Superhero police!
+                        </v-list-item-title>
+                    </v-list-item-content>
 
-        <div>
-            Superpowers:
-            <p v-for="superpower in superhero.superpowers" :key="superpower.id">
-                {{ superpower.name }}
-            </p>
-        </div>
-        <div>Nickname: {{ superhero.nickname }}</div>
+                    <v-list-item-content v-else-if="likesSomeSuperhero">
+                        <v-list-item-title>
+                            Superhero Count
+                        </v-list-item-title>
+                        <v-list-item-subtitle>
+                            {{ superheroesToCompare.length }}
+                        </v-list-item-subtitle>
+                    </v-list-item-content>
 
-        <div>Real name: {{ superhero.real_name }}"</div>
-        <div>Catch phrase: {{ superhero.catch_phra }}</div>
-        <div>Origin description: {{ superhero.origin_description }}</div> -->
-        <div>
-            <table class="with-border">
-                <tr>
-                    <th>Image</th>
-                    <th>Nickname</th>
-                    <th>Real name</th>
-                    <th>Catch phrase</th>
-                    <th>Origin description</th>
-                    <th>Superpowers</th>
-                </tr>
+                    <v-list-item-content v-else>
+                        <v-list-item-title>
+                            How could you not like Superhero?
+                        </v-list-item-title>
+                        <v-list-item-subtitle>
+                            Go ahead, make a selection above!
+                        </v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
+            </template>
+        </v-select>
+
+        <v-simple-table dense>
+            <template v-slot:default>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Nickname</th>
+                        <th>Real name</th>
+                        <th>Catch phrase</th>
+                        <th>Origin description</th>
+                        <th>Superpowers</th>
+                    </tr>
+                </thead>
                 <tr
                     v-for="superhero in superheroesFiltered"
                     :key="superhero.id"
                 >
                     <td>
-                        <img
-                            :src="superhero.images[0].url"
-                            :alt="superhero.images[0].name"
-                            class="photo"
-                        />
+                        <router-link
+                            :to="{
+                                name: 'superhero.show',
+                                params: { id: superhero.id }
+                            }"
+                        >
+                            <img
+                                :src="superhero.images[0].url"
+                                :alt="superhero.images[0].name"
+                                class="photo"
+                            />
+                        </router-link>
                     </td>
                     <td>
                         {{ superhero.nickname }}
@@ -75,12 +122,11 @@
                         </span>
                     </td>
                 </tr>
-            </table>
-        </div>
+            </template>
+        </v-simple-table>
     </div>
 </template>
 <script>
-// import api from "../assets/api/users";
 import requestSuperhero from "../assets/api/superhero.js";
 export default {
     data() {
@@ -89,30 +135,56 @@ export default {
             superheroesToCompare: []
         };
     },
+    methods: {
+        toggle() {
+            this.$nextTick(() => {
+                if (this.likesAllSuperhero) {
+                    this.superheroesToCompare = [];
+                } else {
+                    this.superheroesToCompare = this.superheroes.map(
+                        superhero => superhero.id
+                    );
+                }
+            });
+        }
+    },
     computed: {
         superheroesFiltered() {
             return this.superheroes.filter(superhero =>
                 this.superheroesToCompare.includes(superhero.id)
             );
-            // "selectedFavorites.includes(superhero.id)"
+        },
+
+        likesAllSuperhero() {
+            return this.superheroesToCompare.length === this.superheroes.length;
+        },
+        likesSomeSuperhero() {
+            return (
+                this.superheroesToCompare.length > 0 && !this.likesAllSuperhero
+            );
+        },
+        icon() {
+            if (this.likesAllSuperhero) return "mdi-close-box";
+            if (this.likesSomeSuperhero) return "mdi-minus-box";
+            return "mdi-checkbox-blank-outline";
         }
     },
     created() {
-        requestSuperhero.getAll().then(response => {
-            this.superheroes = response.data;
-        });
-        // .catch(err => {
-        //     this.$router.push({ name: "404" });
-        // });
+        requestSuperhero
+            .getAll()
+            .then(response => {
+                this.superheroes = response.data;
+            })
+            .catch(err => {
+                this.$router.push({ name: "404" });
+            });
     }
 };
 </script>
 <style lang="scss" scoped>
-.main-wrapper {
-    display: inline-flex;
-}
 .photo {
     width: 128px;
+    margin: 5px 10px;
 }
 .img-wrapper {
     display: flex;

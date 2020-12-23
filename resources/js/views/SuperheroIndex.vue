@@ -3,8 +3,8 @@
         <div v-if="error" class="error">
             <p>{{ error }}</p>
         </div>
-        <v-card>
-            <v-card-title>Select superpower</v-card-title>
+        <v-btn @click="toggleFilter">Filter by superpower</v-btn>
+        <v-card v-show="showFilter">
             <v-card-text>
                 <form class="wrapper" @change="filterBySuperpower($event)">
                     <div
@@ -23,51 +23,52 @@
             >
         </v-card>
 
-        <div v-if="superheroes">
+        <div v-if="superheroes" class="card-container">
             <v-card
-                class="mx-auto"
+                class="card-item"
                 max-width="344"
                 outlined
                 v-for="{ nickname, url, id } in superheroes"
                 :key="id"
             >
-                <router-link :to="{ name: 'superhero.show', params: { id } }">
-                    <v-list-item three-line>
-                        <v-list-item-content>
-                            <div class="overline mb-4">
-                                Nickname
-                            </div>
-                            <v-list-item-title class="headline mb-1">
-                                {{ nickname }}
-                            </v-list-item-title>
-                        </v-list-item-content>
+                <v-list-item
+                    three-line
+                    :to="{ name: 'superhero.show', params: { id } }"
+                >
+                    <v-list-item-content>
+                        <div class="overline mb-4">
+                            Nickname
+                        </div>
+                        <v-list-item-title class="headline mb-1">
+                            {{ nickname }}
+                        </v-list-item-title>
+                    </v-list-item-content>
 
-                        <v-list-item-avatar tile size="80" color="grey">
-                            <img
-                                class="photo"
-                                v-if="url[0]"
-                                :src="url[0]"
-                                :alt="nickname"
-                            />
-                        </v-list-item-avatar>
-                    </v-list-item>
-                </router-link>
+                    <v-list-item-avatar tile size="80" color="grey">
+                        <img
+                            class="photo"
+                            v-if="url[0]"
+                            :src="url[0]"
+                            :alt="nickname"
+                        />
+                    </v-list-item-avatar>
+                </v-list-item>
 
                 <v-card-actions>
-                    <v-btn outlined rounded text>
-                        <router-link
-                            :to="{ name: 'superhero.edit', params: { id } }"
-                            >Edit
-                        </router-link>
+                    <v-btn
+                        outlined
+                        rounded
+                        text
+                        :to="{ name: 'superhero.edit', params: { id } }"
+                    >
+                        Edit
                     </v-btn>
                 </v-card-actions>
             </v-card>
         </div>
 
-        <v-btn outlined rounded text>
-            <router-link :to="{ name: 'superhero.create' }"
-                >Add superhero</router-link
-            >
+        <v-btn color="primary" :to="{ name: 'superhero.create' }">
+            Add superhero
         </v-btn>
         <div class="pagination">
             <v-pagination
@@ -96,7 +97,8 @@ export default {
                 next: null,
                 prev: null
             },
-            error: null
+            error: null,
+            showFilter: false
         };
     },
     computed: {
@@ -137,6 +139,9 @@ export default {
         );
     },
     methods: {
+        toggleFilter() {
+            this.showFilter = !this.showFilter;
+        },
         goToPage(pageToGo, reload = false) {
             if (pageToGo === this.meta.current_page && !reload) {
                 return;
@@ -180,5 +185,13 @@ export default {
 <style scoped>
 .photo {
     width: 128px;
+}
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.card-item {
+    margin: 10px;
 }
 </style>

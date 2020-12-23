@@ -47,7 +47,7 @@ const router = new VueRouter({
             component: SuperheroEdit
         },
         {
-            path: "/superhero/create",
+            path: "/create-superhero",
             name: "superhero.create",
             component: SuperheroCreate
         },

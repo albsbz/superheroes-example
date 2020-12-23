@@ -8,43 +8,47 @@
         </div>
         <div v-if="!loaded">Loading...</div>
         <form @submit.prevent="onSubmit($event)" v-else>
-            <div class="form-group">
-                <label for="nickname">Nickname *</label>
-                <input
-                    id="nickname"
-                    v-model="superhero.nickname"
-                    :class="{ 'red-border': errors['nickname'] }"
-                />
-            </div>
-            <div class="form-group">
-                <label for="real-name">Real name *</label>
-                <input
-                    id="real-name"
-                    v-model="superhero.real_name"
-                    :class="{ 'red-border': errors['real_name'] }"
-                />
-            </div>
-            <div class="form-group">
-                <label for="catch-phrase">Catch phrase *</label>
-                <input
-                    id="catch-phrase"
-                    type="text"
-                    v-model="superhero.catch_phrase"
-                    :class="{ 'red-border': errors['catch_phrase'] }"
-                />
-            </div>
-            <div class="form-group">
-                <label for="origin-description">Origin description</label>
-                <textarea
-                    rows="5"
-                    cols="45"
-                    id="origin-description"
-                    v-model="superhero.origin_description"
-                    :class="{ 'red-border': errors['origin_description'] }"
-                />
-            </div>
-            <div class="wrapper">
-                <div class="form-group img-wrapper">
+            <v-text-field
+                label="Nickname *"
+                hide-details="auto"
+                v-model="superhero.nickname"
+                :error="errors['nickname'] !== undefined"
+            >
+            </v-text-field>
+            <v-text-field
+                label="Real name *"
+                hide-details="auto"
+                v-model="superhero.real_name"
+                :error="errors['real_name'] !== undefined"
+            >
+            </v-text-field>
+            <v-text-field
+                label="Catch phrase *"
+                hide-details="auto"
+                v-model="superhero.catch_phrase"
+                :error="errors['catch_phrase'] !== undefined"
+            >
+            </v-text-field>
+            <v-textarea
+                label="Origin description *"
+                hide-details="auto"
+                v-model="superhero.origin_description"
+                :error="
+                    errors['origin_description'] &&
+                        errors['origin_description'].length
+                "
+                rows="3"
+            >
+            </v-textarea>
+
+            <!-- <div > -->
+            <v-btn
+                @click="toggleImageCatalog = !toggleImageCatalog"
+                class="img-btn"
+                >Select images
+            </v-btn>
+            <v-card class="wrapper" v-if="toggleImageCatalog">
+                <v-card class="form-group img-wrapper">
                     <div v-for="image in superhero.allImages" :key="image.id">
                         <input
                             type="checkbox"
@@ -52,36 +56,44 @@
                             :value="image.id"
                             v-model="checkedImages"
                         />
-                        <label for="'image_'+image.id"
-                            ><img
+                        <label for="'image_'+image.id">
+                            <img
                                 :src="image.url"
                                 :alt="'image_' + image.id"
                                 class="photo"
-                        /></label>
+                            />
+                        </label>
                     </div>
-                </div>
-            </div>
-            <select v-model="selectedSuperpowers" multiple>
-                <option
-                    v-for="superpower in superhero.allSuperpowers"
-                    v-bind:value="superpower.id"
-                    :key="superpower.name"
-                >
-                    {{ superpower.name }}
-                </option>
-            </select>
+                </v-card>
+            </v-card>
+
+            <v-select
+                v-model="selectedSuperpowers"
+                :items="superhero.allSuperpowers"
+                item-value="id"
+                attach
+                chips
+                item-text="name"
+                multiple
+            >
+            </v-select>
 
             <div class="form-group">
-                <button type="submit" :disabled="saving">Update</button>
-                <button :disabled="saving" @click.prevent="onDelete($event)">
+                <v-btn type="submit" color="primary" :disabled="saving">
+                    Update
+                </v-btn>
+                <v-btn
+                    color="error"
+                    :disabled="saving"
+                    @click.prevent="onDelete($event)"
+                >
                     Delete
-                </button>
+                </v-btn>
             </div>
         </form>
     </div>
 </template>
 <script>
-// import api from "../assets/api/users";
 import requestSuperhero from "../assets/api/superhero.js";
 export default {
     data() {
@@ -101,7 +113,7 @@ export default {
                 superpowers: [],
                 allSuperpowers: []
             },
-
+            toggleImageCatalog: false,
             checkedImages: [],
             selectedSuperpowers: []
         };
@@ -151,7 +163,6 @@ export default {
         }
     },
     created() {
-        // @todo load user details
         requestSuperhero
             .find(this.$route.params.id)
             .then(response => {
@@ -202,8 +213,7 @@ $darkRed: darken($red, 50%);
     width: 128px;
 }
 .wrapper {
-    border: 1px solid black;
-    height: 30vh;
+    height: 150px;
     overflow: auto;
 }
 .img-wrapper {
@@ -217,5 +227,8 @@ $darkRed: darken($red, 50%);
 }
 .red-border {
     border-color: red;
+}
+.img-btn {
+    margin: 10px;
 }
 </style>
