@@ -3,59 +3,84 @@
         <div v-if="error" class="error">
             <p>{{ error }}</p>
         </div>
-        <form class="wrapper" @change="filterBySuperpower($event)">
-            <div v-for="superpower in allSuperpowers" :key="superpower.id">
-                <input
-                    type="checkbox"
-                    :id="superpower.id"
-                    :value="superpower.id"
-                    v-model="checkedSuperpowers"
-                />
-                <label for="superpower.id">{{ superpower.name }}</label>
-            </div>
-        </form>
-        <ul v-if="superheroes">
-            <li v-for="{ nickname, url, id } in superheroes" :key="id">
-                <router-link :to="{ name: 'superhero.show', params: { id } }"
-                    ><img
-                        class="photo"
-                        v-if="url[0]"
-                        :src="url[0]"
-                        :alt="nickname"
-                    />
-                    <strong>Nickname:{{ nickname }}</strong>
+        <v-card>
+            <v-card-title>Select superpower</v-card-title>
+            <v-card-text>
+                <form class="wrapper" @change="filterBySuperpower($event)">
+                    <div
+                        v-for="superpower in allSuperpowers"
+                        :key="superpower.id"
+                    >
+                        <input
+                            type="checkbox"
+                            :id="superpower.id"
+                            :value="superpower.id"
+                            v-model="checkedSuperpowers"
+                        />
+                        <label for="superpower.id">{{ superpower.name }}</label>
+                    </div>
+                </form></v-card-text
+            >
+        </v-card>
+
+        <div v-if="superheroes">
+            <v-card
+                class="mx-auto"
+                max-width="344"
+                outlined
+                v-for="{ nickname, url, id } in superheroes"
+                :key="id"
+            >
+                <router-link :to="{ name: 'superhero.show', params: { id } }">
+                    <v-list-item three-line>
+                        <v-list-item-content>
+                            <div class="overline mb-4">
+                                Nickname
+                            </div>
+                            <v-list-item-title class="headline mb-1">
+                                {{ nickname }}
+                            </v-list-item-title>
+                        </v-list-item-content>
+
+                        <v-list-item-avatar tile size="80" color="grey">
+                            <img
+                                class="photo"
+                                v-if="url[0]"
+                                :src="url[0]"
+                                :alt="nickname"
+                            />
+                        </v-list-item-avatar>
+                    </v-list-item>
                 </router-link>
-                <router-link :to="{ name: 'superhero.edit', params: { id } }"
-                    >Edit</router-link
-                >
-            </li>
-        </ul>
-        <div>
+
+                <v-card-actions>
+                    <v-btn outlined rounded text>
+                        <router-link
+                            :to="{ name: 'superhero.edit', params: { id } }"
+                            >Edit
+                        </router-link>
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </div>
+
+        <v-btn outlined rounded text>
             <router-link :to="{ name: 'superhero.create' }"
                 >Add superhero</router-link
             >
-        </div>
+        </v-btn>
         <div class="pagination">
-            <button :disabled="!prevPage" @click.prevent="goToPrev">
-                Previous
-            </button>
-            <button
-                v-for="page in allPages"
-                :key="page"
-                @click.prevent="goToPage(page)"
-                :disabled="page === meta.current_page"
-            >
-                {{ page }}
-            </button>
-            <!-- {{ paginatonCount }} -->
-            <button :disabled="!nextPage" @click.prevent="goToNext">
-                Next
-            </button>
+            <v-pagination
+                class="my-4"
+                :value="currentPage"
+                :length="pagesLength"
+                @input="goToPage"
+                total-visible="5"
+            ></v-pagination>
         </div>
     </div>
 </template>
 <script>
-// import axios from "axios";
 import requestSuperhero from "../assets/api/superhero.js";
 
 export default {
@@ -75,35 +100,11 @@ export default {
         };
     },
     computed: {
-        allPages() {
-            return Array.from(
-                { length: this.meta ? this.meta.last_page : 0 },
-                (v, i) => i + 1
-            );
+        currentPage() {
+            return this.meta?.current_page;
         },
-
-        nextPage() {
-            if (!this.meta || this.meta.current_page === this.meta.last_page) {
-                return;
-            }
-
-            return this.meta.current_page + 1;
-        },
-        prevPage() {
-            if (!this.meta || this.meta.current_page === 1) {
-                return;
-            }
-
-            return this.meta.current_page - 1;
-        },
-        paginatonCount() {
-            if (!this.meta) {
-                return;
-            }
-
-            const { current_page, last_page } = this.meta;
-
-            return `${current_page} of ${last_page}`;
+        pagesLength() {
+            return this.meta?.last_page;
         }
     },
     beforeRouteEnter(to, from, next) {
@@ -121,8 +122,7 @@ export default {
             this.allSuperpowers = response.data.allSuperpowers;
         });
     },
-    // when route changes and this component is already rendered,
-    // the logic will be slightly different.
+
     beforeRouteUpdate(to, from, next) {
         this.superheroes = this.links = this.meta = null;
         requestSuperhero.getIndexData(
@@ -147,21 +147,7 @@ export default {
                 }
             });
         },
-        goToNext() {
-            this.$router.push({
-                query: {
-                    page: this.nextPage
-                }
-            });
-        },
-        goToPrev() {
-            this.$router.push({
-                name: "superhero.index",
-                query: {
-                    page: this.prevPage
-                }
-            });
-        },
+
         setData(err, { data: data, links, meta }) {
             if (err) {
                 this.error = err.toString();
